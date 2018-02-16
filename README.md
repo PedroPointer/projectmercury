@@ -1,6 +1,6 @@
 # projectmercury
 
-Aplicación construida con Spring Boot. Ofrece un servicio de localizador de rutas aéreas y horarios, para viajes directos o con una escala, explotando servicios de test de ryanair.
+Aplicación construida con Spring Boot. Ofrece un servicio de localizador de rutas aéreas y horarios, para viajes directos o con una escala, explotando servicios de ryanair.
 
 El contex-root = "/mercury/" los parametros de entrada son:
   departure - a departure airport IATA code
