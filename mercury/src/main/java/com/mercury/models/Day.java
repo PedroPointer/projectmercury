@@ -19,6 +19,4 @@ public class Day {
 	public void setFlights(List<Flight> flights) {
 		Flights = flights;
 	}
-	 
-	
 }

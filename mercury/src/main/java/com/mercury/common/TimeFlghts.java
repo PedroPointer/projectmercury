@@ -1,13 +1,10 @@
 package com.mercury.common;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
-
 
 import org.springframework.stereotype.Component;
 
@@ -15,79 +12,79 @@ import org.springframework.stereotype.Component;
 @Component
 public class TimeFlghts {
 	
-	private String years;
-	private String months;
-	private Integer iMonths;
-
-	 public int compareHora(String hour1, String hour2) {
-		 int out= 0;
-		try {	
-		 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		 Date date1 = sdf.parse(hour1);
-		 Date date2 = sdf.parse(hour2);
-		 out=  date1.compareTo(date2);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return out;
+	public boolean inCorrecDateimput( String departureDateTime2 , String dateFlightArrival1) {
+		try {
+		 Date arrival1 = this.FromString(dateFlightArrival1);
+		 Date departure2 = this.FromString(departureDateTime2);
+		 if (arrival1.compareTo(departure2) > 0) {
+			 return true;
+		 }
+		}catch (Exception e) {
+			return false;
 		}
-		return out;
-	 }
+		return false;
+	}
 	
-	public Date FromString (String time, Integer offset ) {
+	public boolean inCorrecDiference(String dateFlightArrival1, String departureDateTime2) {
+		 Date arrival1 = this.FromString(dateFlightArrival1);
+		 Date departure2 = this.FromString(departureDateTime2);
+
+	     Calendar calendar = Calendar.getInstance();
+         calendar.setTime(arrival1);
+	     calendar.add(Calendar.HOUR, 2);  
+	     arrival1= calendar.getTime();
+	     calendar.add(Calendar.HOUR, 6);
+	     Date endDate = calendar.getTime();
+		 
+	     if (arrival1.compareTo(departure2) * departure2.compareTo(endDate) >= 0) {
+		    	return true;
+		}
+		 return false; 
+	 }
+	 
+	public Date FromStringAddOffset (String time, Integer offset ) {
 		try {	
-		//time = time+"-0"+SSSZ;					 2018-04-04T07:00:00
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-	    TimeZone timezone = TimeZone.getDefault();
-	    timezone.setRawOffset(offset*60*60*100);
-		sdf.setTimeZone(timezone );
-		Date result = sdf.parse(time);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		String timeZone =String.format("%02d",offset)+"00";
+		if (offset>0) {
+			timeZone= "+"+timeZone; 
+		}else {
+			timeZone= "-"+timeZone;
+		}
+		Date result = sdf.parse(time +":00"+timeZone);
 		return result;
 	
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public Integer [] getDiferenceDate ( Date inicio, Date fin ) {
-			Integer monthYear [] = new Integer [2];
-			Calendar cInicio = Calendar.getInstance();
-			cInicio.setTime(inicio);
-			Calendar cFin = Calendar.getInstance();
-			cInicio.setTime(inicio);
-            
-			int difM = cFin.get(Calendar.YEAR) - cInicio.get(Calendar.YEAR);
-			int difA = difM * 12 + cFin.get(Calendar.MONTH) - cInicio.get(Calendar.MONTH);
-			
-			monthYear[0]=  difM;
-			monthYear[1]=  difA;
-
-            return monthYear;
+	public Date FromString (String time) {
+		try {	
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+		return sdf.parse(time);
+		} catch (ParseException e) {
+//			e.printStackTrace();
+			return null;
+		}
 	}
 	
-	 public Integer getMonth(Date date) {
+	public Integer getMonth(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		return cal.get(Calendar.MONTH);
 	 }
 	 
-	 public Integer getDay(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		return cal.get(Calendar.DAY_OF_MONTH);
-	 }
-	 
-	 public String getHora(Date date) {
-		 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    public String setOutFormatDate(Date date) {
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		return sdf.format(date);
 	 }
-	 public String setDateTimeFormat(Long year,Long month,Long day,String hour, Integer offset) {
+	 
+	public Date setDateByFligth(Long year,Long month,Integer day,String hour, Integer offset) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
-		SimpleDateFormat sdfout = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 		String time = year.toString()+"-"+String.format("%02d", (month))+"-"+String.format("%02d", (day))
 		+ "-"+hour;
 		
@@ -95,60 +92,27 @@ public class TimeFlghts {
 	    timezone.setRawOffset(offset*60*60*100);
 	    sdf.setTimeZone(timezone );
 
-		Date date = null;
 		try {
-			date = sdf.parse(time);
-			return sdfout.format(date);
+			return sdf.parse(time);
 		} catch (ParseException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		return null;
 	 }
-	 
-	 
 	
-	 public Integer getYear(Date date) {
+	public Integer getYear(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		return cal.get(Calendar.YEAR);
-	 }
+	}
 	 
+	public Date addMonthDate (Date date, int mouth){
+	       Calendar calendar = Calendar.getInstance();
+	       calendar.setTime(date); 
+	       calendar.add(Calendar.MONTH , mouth); 
+	       return calendar.getTime(); 
+	}
 	 
-	 public Date addMonthDate (Date date, int mouth){
-		       Calendar calendar = Calendar.getInstance();
-		       calendar.setTime(date); 
-		       calendar.add(Calendar.MONTH , mouth); 
-		       return calendar.getTime(); 
-		  }
-	 
-	
-    /** Transform Calendar to ISO 8601 string. */
-    public static String fromCalendar(final Calendar calendar) {
-        Date date = calendar.getTime();
-        String formatted = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-            .format(date);
-        return formatted.substring(0, 22) + ":" + formatted.substring(22);
-    }
-
-    /** Get current date and time formatted as ISO 8601 string. */
-    public static String now() {
-        return fromCalendar(GregorianCalendar.getInstance());
-    }
-
-    /** Transform ISO 8601 string to Calendar. */
-    public static Calendar toCalendar(final String iso8601string)
-            throws ParseException {
-        Calendar calendar = GregorianCalendar.getInstance();
-        String s = iso8601string.replace("Z", "+00:00");
-        try {
-            s = s.substring(0, 22) + s.substring(23);  // to get rid of the ":"
-        } catch (IndexOutOfBoundsException e) {
-            throw new ParseException("Invalid length", 0);
-        }
-        Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(s);
-        calendar.setTime(date);
-        return calendar;
-    }
 }
 	
 

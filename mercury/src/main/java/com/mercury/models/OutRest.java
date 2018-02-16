@@ -19,7 +19,4 @@ public class OutRest {
 	public void setLegs(List<Legs> legs) {
 		this.legs = legs;
 	}
-
-	
-	
 }

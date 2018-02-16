@@ -8,7 +8,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.mercury.models.Day;
 import com.mercury.models.Flight;
@@ -18,13 +17,10 @@ import com.mercury.models.Schedules;
 @Component
 public class Parse {
 
-	@Autowired
-	private TimeFlghts timeFlghts;
 	
 	 public  Schedules loadSchedulesApiByJSON(String dataImput,String departure,String arrival,Integer year,Integer departureOffset,Integer arrivalOffset) {
 	    	Schedules schedulesMonth = new Schedules();
-	    	
-	    
+
 	        try {
 	        	JSONParser jsonParser = new JSONParser();
 	        	JSONObject jsonObject = (JSONObject) jsonParser.parse(dataImput);
@@ -54,13 +50,8 @@ public class Parse {
 			                flight.setNumber( new Integer(number)) ;
 			                flight.setDepartureTime( departureTime); 
 			                flight.setArrivalTime( arrivalTime); 
-//			            	if (departure == null ||            			
-//			            			( departure == true && (timeFlghts.compareHora(arrivalTime, timeFilter)>0) ) 
-//			            			|| (departure == false && (timeFlghts.compareHora(arrivalTime, timeFilter)>0) ) ){
-//				               
-//			            	}
-			            	 flights.add(flight);
-			               // System.out.println( number+"----"+departureTime+"----"+arrivalTime); //-06:10----09:55
+
+			            	flights.add(flight);
 		                }
 		            	day.setDay(dia);
 		            	day.setFlights(flights);
@@ -74,20 +65,18 @@ public class Parse {
 	            schedulesMonth.setDays(days);
 	            
 	        } catch (Exception e) {
-	        	e.printStackTrace();
+//	        	e.printStackTrace();
 	        }
 			return schedulesMonth;
 	 }
 
      public  List<Routes[]> loadRoutesApiByJSON(String dataImput,String departure,String arrival) {
-//    	List<Routes> listRoutes = new ArrayList<Routes>();
     	List<Routes> listDepartures = new ArrayList<Routes>();
     	List<Routes> listarrivals = new ArrayList<Routes>();
 
         try {
         	JSONParser jsonParser = new JSONParser();
-        //	JSONObject jsonObject = (JSONObject) jsonParser.parse(dataImput);
-        	JSONArray jsonArray = (JSONArray) jsonParser.parse(dataImput);
+          	JSONArray jsonArray = (JSONArray) jsonParser.parse(dataImput);
 
             Iterator i = jsonArray.iterator();
             while (i.hasNext()) {
@@ -101,7 +90,6 @@ public class Parse {
                 String group = (String) element.get("group");
                 
                 if ( ( airportTo.equalsIgnoreCase(arrival) ) && connectingAirport==null ) {
-//                	if ( ( airportTo.equalsIgnoreCase(arrival) )  && ( connectingAirport!=null && connectingAirport.equalsIgnoreCase(NULL))) {
                     Routes routes = new Routes();
                     routes.setAirportFrom(airportFrom);
                     routes.setAirportTo(airportTo);
@@ -109,11 +97,9 @@ public class Parse {
                     routes.setNewRoute(newRoute);
                     routes.setSeasonalRoute(seasonalRoute);
                     routes.setGroup(group);
-//                    System.out.println( "listarrivals :" +airportFrom +" to "+airportTo +", conect " + connectingAirport +", seasonalRoute "+seasonalRoute) ;
                     listarrivals.add(routes);
                 }
                 if ( ( airportFrom.equalsIgnoreCase(departure) )  && connectingAirport==null) {
-//                if ( ( airportFrom.equalsIgnoreCase(departure) )  && connectingAirport!=null && connectingAirport.equalsIgnoreCase(NULL)		) {
                     Routes routes = new Routes();
                     routes.setAirportFrom(airportFrom);
                     routes.setAirportTo(airportTo);
@@ -121,28 +107,26 @@ public class Parse {
                     routes.setNewRoute(newRoute);
                     routes.setSeasonalRoute(seasonalRoute);
                     routes.setGroup(group);
-//                    System.out.println(airportFrom +" to "+airportTo +", conect " + connectingAirport +", seasonalRoute "+seasonalRoute) ;
                     listDepartures.add(routes);
                 }
             }
         } catch (Exception e) {
             return null;
         }
-        System.out.println("____________________________");
         List<Routes[]> listRoutes = new ArrayList<Routes[]>();
         
         for ( Routes routeDep : listDepartures ) {
             for ( Routes rutaArri : listarrivals ) {
             	if (routeDep.getAirportTo().equals(rutaArri.getAirportFrom()) ) {
             		Routes[] element = new Routes[2] ;
-            		 System.out.println( routeDep.getAirportFrom() +" to "+ routeDep.getAirportTo() +", conect " +  rutaArri.getAirportFrom()+" to "+ rutaArri.getAirportTo()  +" + 1 connectingAirport="+routeDep.getConnectingAirport()) ;
+//            		 System.out.println( routeDep.getAirportFrom() +" to "+ routeDep.getAirportTo() +", conect " +  rutaArri.getAirportFrom()+" to "+ rutaArri.getAirportTo()  +" + 1 connectingAirport="+routeDep.getConnectingAirport()) ;
             		 element[0] = routeDep;
             		 element[1]= rutaArri;
                 	listRoutes.add(element);
             	} else if(rutaArri.getAirportTo().equals(routeDep.getAirportTo())
             					&& rutaArri.getAirportFrom().equals(routeDep.getAirportFrom())) { 
             		Routes[] element = new Routes[2] ;
-            		System.out.println(routeDep.getAirportFrom() +" to "+ routeDep.getAirportTo() +", conect " + routeDep.getConnectingAirport() ) ;
+//            		System.out.println(routeDep.getAirportFrom() +" to "+ routeDep.getAirportTo() +", conect " + routeDep.getConnectingAirport() ) ;
 	           		 element[0] = routeDep;
 	           		 element[1]= null;
 	           		listRoutes.add(element);
@@ -160,10 +144,9 @@ public class Parse {
 	        	utcOffset = (Long) jsonObject.get("utc_offset");
        
 	        } catch (Exception e) {
-	        	e.printStackTrace();
+//	        	e.printStackTrace();
 	        	return null;
 	        }
 	        return utcOffset;
 	  }
-	
 }

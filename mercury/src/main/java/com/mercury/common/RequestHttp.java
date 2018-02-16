@@ -18,7 +18,7 @@ public abstract class RequestHttp {
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
             data = readStream(in);
         } catch (RuntimeException  e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         } finally {
             urlConnection.disconnect();
         }
